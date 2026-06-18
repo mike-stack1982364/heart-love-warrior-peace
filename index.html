@@ -13,70 +13,79 @@
   html, body {
     margin: 0;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     background: #000;
     color: #fff;
     font-family: Arial, Helvetica, sans-serif;
-    overflow: hidden;
   }
 
   body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #000;
+    overflow: auto;
   }
 
   .app {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     background: #000;
-    overflow: hidden;
-  }
-
-  .layout {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    grid-template-rows: 1fr auto 1fr;
-    align-items: center;
-    justify-items: center;
-    padding: 28px 34px;
-    gap: 18px 22px;
-  }
-
-  .names {
-    color: #fff;
-    font-size: 25px;
-    line-height: 1.28;
-    text-align: center;
-    max-width: 460px;
-    text-shadow: 0 0 10px rgba(255,255,255,0.18);
-  }
-
-  .names div {
-    margin: 6px 0;
-  }
-
-  .top-left    { grid-column: 1; grid-row: 1; align-self: end; justify-self: end; }
-  .top-right   { grid-column: 3; grid-row: 1; align-self: end; justify-self: start; }
-  .left-mid    { grid-column: 1; grid-row: 2; justify-self: end; }
-  .right-mid   { grid-column: 3; grid-row: 2; justify-self: start; }
-  .bottom-left { grid-column: 1; grid-row: 3; align-self: start; justify-self: end; }
-  .bottom-right{ grid-column: 3; grid-row: 3; align-self: start; justify-self: start; }
-
-  .centre-wrap {
-    grid-column: 2;
-    grid-row: 2;
     display: grid;
     place-items: center;
+    padding: 18px;
+  }
+
+  .stage {
+    width: min(1500px, 100%);
+    min-height: calc(100vh - 36px);
+    display: grid;
+    grid-template-columns: minmax(320px, 1fr) auto minmax(320px, 1fr);
+    align-items: center;
+    gap: 24px;
+  }
+
+  .name-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+    min-height: 100%;
+  }
+
+  .left-column {
+    align-items: flex-end;
+  }
+
+  .right-column {
+    align-items: flex-start;
+  }
+
+  .name-box {
+    width: min(430px, 100%);
+    padding: 14px 18px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: #000;
+    color: #fff;
+    font-size: 25px;
+    line-height: 1.32;
+    text-shadow: 0 0 10px rgba(255,255,255,0.14);
+  }
+
+  .name-box div {
+    margin: 0 0 8px 0;
+  }
+
+  .name-box div:last-child {
+    margin-bottom: 0;
+  }
+
+  .metronome-wrap {
+    display: grid;
+    place-items: center;
+    padding: 8px;
   }
 
   .metronome {
     position: relative;
-    width: min(44vmin, 430px);
-    height: min(44vmin, 430px);
+    width: 320px;
+    height: 320px;
     display: grid;
     place-items: center;
   }
@@ -85,15 +94,23 @@
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.22);
+    border: 1px solid rgba(255,255,255,0.20);
   }
 
   .inner-ring {
     position: absolute;
-    width: 62%;
-    height: 62%;
+    width: 68%;
+    height: 68%;
     border-radius: 50%;
     border: 1px solid rgba(255,255,255,0.14);
+  }
+
+  .inner-ring-2 {
+    position: absolute;
+    width: 56%;
+    height: 56%;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
   }
 
   .marks {
@@ -109,176 +126,177 @@
     width: 2px;
     height: 10px;
     border-radius: 20px;
-    background: rgba(255,255,255,0.23);
-    transform-origin: 50% -19.5vmin;
+    background: rgba(255,255,255,0.20);
   }
 
   .mark.major {
     width: 3px;
-    height: 18px;
-    background: rgba(255,255,255,0.42);
+    height: 20px;
+    background: rgba(255,255,255,0.38);
   }
 
   .mark.active {
     background: rgba(255,255,255,1);
     box-shadow:
-      0 0 10px rgba(255,255,255,0.95),
-      0 0 20px rgba(255,255,255,0.65);
+      0 0 8px rgba(255,255,255,0.95),
+      0 0 18px rgba(255,255,255,0.60);
   }
 
   .centre {
     position: relative;
-    width: min(22vmin, 215px);
-    aspect-ratio: 1;
+    width: 170px;
+    height: 170px;
     border-radius: 50%;
     display: grid;
     place-items: center;
     background: #000;
-    border: 1px solid rgba(255,255,255,0.28);
+    border: 1px solid rgba(255,255,255,0.24);
     box-shadow:
-      0 0 28px rgba(255,255,255,0.07),
-      inset 0 0 24px rgba(255,255,255,0.05);
+      0 0 20px rgba(255,255,255,0.06),
+      inset 0 0 20px rgba(255,255,255,0.05);
     text-align: center;
-    padding: 12px;
-  }
-
-  .countdown {
-    font-size: clamp(2.4rem, 5.2vmin, 4.1rem);
-    font-weight: 800;
-    letter-spacing: -0.06em;
-    line-height: 1;
-    color: #fff;
-    text-shadow: 0 0 18px rgba(255,255,255,0.35);
   }
 
   .cycle {
     position: absolute;
-    top: 16%;
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 0.35em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.65);
+    white-space: nowrap;
+  }
+
+  .countdown {
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: -0.08em;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 18px rgba(255,255,255,0.30);
   }
 
   .label {
     position: absolute;
-    bottom: 14%;
-    font-size: 0.62rem;
-    letter-spacing: 0.16em;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.42);
     white-space: nowrap;
   }
 
-  @media (max-width: 1400px) {
-    .names {
-      font-size: 25px;
-      max-width: 360px;
+  @media (max-width: 1320px) {
+    .stage {
+      grid-template-columns: minmax(280px, 1fr) auto minmax(280px, 1fr);
+      gap: 18px;
+    }
+
+    .name-box {
+      width: min(380px, 100%);
     }
 
     .metronome {
-      width: min(40vmin, 360px);
-      height: min(40vmin, 360px);
+      width: 290px;
+      height: 290px;
     }
 
     .centre {
-      width: min(21vmin, 190px);
+      width: 156px;
+      height: 156px;
+    }
+
+    .countdown {
+      font-size: 56px;
     }
   }
 
-  @media (max-width: 1100px) {
-    html, body {
-      overflow: auto;
+  @media (max-width: 1080px) {
+    .stage {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      min-height: auto;
     }
 
-    .app {
-      height: auto;
-      min-height: 100vh;
-      overflow: visible;
+    .name-column {
+      align-items: center;
+      min-height: auto;
     }
 
-    .layout {
-      position: relative;
-      inset: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      padding: 28px 18px 40px;
+    .left-column,
+    .right-column {
+      align-items: center;
     }
 
-    .top-left, .top-right, .left-mid, .right-mid, .bottom-left, .bottom-right, .centre-wrap {
-      grid-column: auto;
-      grid-row: auto;
-      align-self: center;
-      justify-self: center;
+    .metronome-wrap {
+      order: -1;
     }
 
-    .names {
-      max-width: 95vw;
+    .name-box {
+      width: min(95vw, 700px);
       font-size: 25px;
-    }
-
-    .metronome {
-      width: min(70vw, 400px);
-      height: min(70vw, 400px);
-      margin: 10px 0;
-    }
-
-    .mark {
-      transform-origin: 50% -31vw;
     }
   }
 </style>
 </head>
 <body>
   <main class="app">
-    <section class="layout">
+    <section class="stage">
 
-      <div class="names top-left">
-        <div>Grandad (Michael Letho) and Grandma (Patricia Letho)</div>
-        <div>Dad and Ahzhu (Mom)</div>
-      </div>
+      <section class="name-column left-column">
+        <div class="name-box">
+          <div>Grandad (Michael Letho) and Grandma (Patricia Letho)</div>
+          <div>Dad and Ahzhu (Mom)</div>
+        </div>
 
-      <div class="names top-right">
-        <div>Paul and Elaine</div>
-        <div>Marea Letho</div>
-      </div>
+        <div class="name-box">
+          <div>Paul and Elaine</div>
+          <div>Marea Letho</div>
+          <div>Mick Letho</div>
+        </div>
 
-      <div class="names left-mid">
-        <div>Mick Letho</div>
-        <div>Sharon Letho</div>
-        <div>Andy Letho</div>
-      </div>
+        <div class="name-box">
+          <div>Sharon Letho</div>
+          <div>Andy Letho</div>
+          <div>Kate Letho</div>
+        </div>
+      </section>
 
-      <div class="centre-wrap">
-        <section class="metronome" aria-label="Silent visual metronome">
+      <section class="metronome-wrap">
+        <div class="metronome" aria-label="Silent visual metronome">
           <div class="ring"></div>
           <div class="inner-ring"></div>
+          <div class="inner-ring-2"></div>
           <div class="marks" id="marks"></div>
 
           <div class="centre">
-            <div class="cycle" id="cycleText">Cycle 1</div>
+            <div class="cycle" id="cycleText">CYCLE 1</div>
             <div class="countdown" id="countdown">01:00</div>
             <div class="label">Silent · Visual · 60 BPM</div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
-      <div class="names right-mid">
-        <div>Kate Letho</div>
-        <div>Harry and Rita Perelberg</div>
-        <div>Ben Perelberg</div>
-      </div>
+      <section class="name-column right-column">
+        <div class="name-box">
+          <div>Harry and Rita Perelberg</div>
+          <div>Ben Perelberg</div>
+          <div>Mum (Susan Whild)</div>
+        </div>
 
-      <div class="names bottom-left">
-        <div>Mum (Susan Whild)</div>
-        <div>Martin Zanin</div>
-        <div>John Wyatt</div>
-      </div>
+        <div class="name-box">
+          <div>Martin Zanin</div>
+          <div>John Wyatt</div>
+        </div>
 
-      <div class="names bottom-right">
-        <div>Peter and Lauren Citrine (Lachlan and Caleb Citrine)</div>
-      </div>
+        <div class="name-box">
+          <div>Peter and Lauren Citrine (Lachlan and Caleb Citrine)</div>
+        </div>
+      </section>
 
     </section>
   </main>
@@ -300,27 +318,27 @@
   }
 
   function createMarks() {
+    const radius = 145;
+
     for (let i = 0; i < 60; i++) {
+      const angle = (i * 6 - 90) * Math.PI / 180;
+      const x = 160 + Math.cos(angle) * radius;
+      const y = 160 + Math.sin(angle) * radius;
+
       const mark = document.createElement("div");
       mark.className = i % 5 === 0 ? "mark major" : "mark";
-      mark.style.transform = `rotate(${i * 6}deg) translateY(19.5vmin)`;
+      mark.style.left = `${x}px`;
+      mark.style.top = `${y}px`;
+      mark.style.transform = `translate(-50%, -50%) rotate(${i * 6}deg)`;
+
       marksContainer.appendChild(mark);
       marks.push(mark);
     }
   }
 
-  function updateMarkDistance() {
-    const isSmall = window.innerWidth <= 1100;
-    const distance = isSmall ? "31vw" : "19.5vmin";
-
-    marks.forEach((mark, i) => {
-      mark.style.transform = `rotate(${i * 6}deg) translateY(${distance})`;
-    });
-  }
-
   function render() {
     countdown.textContent = formatTime(remaining);
-    cycleText.textContent = `Cycle ${cycle}`;
+    cycleText.textContent = `CYCLE ${cycle}`;
 
     marks.forEach(mark => mark.classList.remove("active"));
     marks[activeMark].classList.add("active");
@@ -339,11 +357,7 @@
   }
 
   createMarks();
-  updateMarkDistance();
   render();
-
-  window.addEventListener("resize", updateMarkDistance);
-
   setInterval(tick, 1000);
 </script>
 </body>
