@@ -3,78 +3,65 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Silent Space Metronome</title>
+<title>Silent Black Space Metronome</title>
 
 <style>
   * {
     box-sizing: border-box;
   }
 
+  html,
   body {
     margin: 0;
-    min-height: 100vh;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
     background: #000;
-    color: white;
+    color: #fff;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
-  .space {
-    position: relative;
+  body {
+    display: grid;
+    place-items: center;
+  }
+
+  .app {
     width: 100vw;
     height: 100vh;
     background: #000;
     display: grid;
     place-items: center;
-  }
-
-  .star {
-    position: absolute;
-    border-radius: 50%;
-    background: white;
-    opacity: var(--opacity);
-    width: var(--size);
-    height: var(--size);
-    box-shadow: 0 0 8px rgba(255,255,255,0.55);
+    position: relative;
   }
 
   .metronome {
     position: relative;
-    width: min(76vmin, 720px);
-    height: min(76vmin, 720px);
+    width: min(78vmin, 740px);
+    height: min(78vmin, 740px);
     display: grid;
     place-items: center;
   }
 
-  .outer-ring,
-  .middle-ring,
-  .inner-ring {
+  .ring {
     position: absolute;
+    inset: 0;
     border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.14);
-  }
-
-  .outer-ring {
-    width: 100%;
-    height: 100%;
-  }
-
-  .middle-ring {
-    width: 72%;
-    height: 72%;
-    border-color: rgba(125, 249, 255, 0.18);
+    border: 1px solid rgba(255,255,255,0.18);
   }
 
   .inner-ring {
-    width: 46%;
-    height: 46%;
-    border-color: rgba(255,255,255,0.22);
+    position: absolute;
+    width: 62%;
+    height: 62%;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
   }
 
-  .second-marks {
+  .marks {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    inset: 0;
+    border-radius: 50%;
   }
 
   .mark {
@@ -83,7 +70,7 @@
     top: 50%;
     width: 2px;
     height: 12px;
-    border-radius: 99px;
+    border-radius: 20px;
     background: rgba(255,255,255,0.22);
     transform-origin: 50% -35vmin;
   }
@@ -91,134 +78,99 @@
   .mark.major {
     width: 3px;
     height: 22px;
-    background: rgba(125,249,255,0.62);
-    box-shadow: 0 0 12px rgba(125,249,255,0.55);
+    background: rgba(255,255,255,0.42);
   }
 
-  .core {
+  .mark.active {
+    background: rgba(255,255,255,1);
+    box-shadow:
+      0 0 10px rgba(255,255,255,0.95),
+      0 0 22px rgba(255,255,255,0.65);
+  }
+
+  .centre {
     position: relative;
-    width: min(34vmin, 320px);
+    width: min(36vmin, 340px);
     aspect-ratio: 1;
     border-radius: 50%;
     display: grid;
     place-items: center;
-    background:
-      radial-gradient(circle at 50% 45%, rgba(255,255,255,0.22), rgba(125,249,255,0.08) 42%, rgba(0,0,0,0.92) 74%);
+    background: #000;
     border: 1px solid rgba(255,255,255,0.26);
     box-shadow:
-      0 0 42px rgba(125,249,255,0.22),
-      inset 0 0 42px rgba(125,249,255,0.14);
-    transition: transform 160ms ease-out, box-shadow 160ms ease-out, border-color 160ms ease-out;
-  }
-
-  .core.beat {
-    transform: scale(1.075);
-    border-color: rgba(125,249,255,0.9);
-    box-shadow:
-      0 0 30px rgba(255,255,255,0.8),
-      0 0 74px rgba(125,249,255,0.64),
-      0 0 130px rgba(125,249,255,0.28),
-      inset 0 0 58px rgba(125,249,255,0.3);
+      0 0 32px rgba(255,255,255,0.08),
+      inset 0 0 32px rgba(255,255,255,0.06);
   }
 
   .countdown {
-    font-size: clamp(3.8rem, 10vmin, 8rem);
+    font-size: clamp(4rem, 10vmin, 8rem);
     font-weight: 850;
     letter-spacing: -0.08em;
     line-height: 1;
-    text-shadow:
-      0 0 14px rgba(255,255,255,0.88),
-      0 0 42px rgba(125,249,255,0.72);
+    color: #fff;
+    text-shadow: 0 0 22px rgba(255,255,255,0.58);
   }
 
   .cycle {
     position: absolute;
     top: 18%;
-    font-size: clamp(0.74rem, 1.6vmin, 1rem);
+    font-size: clamp(0.72rem, 1.5vmin, 1rem);
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: rgba(125,249,255,0.82);
+    color: rgba(255,255,255,0.62);
   }
 
   .label {
     position: absolute;
     bottom: 18%;
-    font-size: clamp(0.68rem, 1.5vmin, 0.95rem);
-    letter-spacing: 0.28em;
+    font-size: clamp(0.68rem, 1.4vmin, 0.95rem);
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.58);
-  }
-
-  .beat-indicator {
-    position: absolute;
-    bottom: 11%;
-    display: flex;
-    gap: 8px;
-  }
-
-  .beat-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.28);
-    transition: background 160ms ease-out, box-shadow 160ms ease-out, transform 160ms ease-out;
-  }
-
-  .beat-dot.active {
-    background: rgba(125,249,255,0.95);
-    box-shadow: 0 0 16px rgba(125,249,255,0.9);
-    transform: scale(1.45);
+    color: rgba(255,255,255,0.42);
   }
 
   .caption {
     position: absolute;
-    left: 50%;
     bottom: 4vh;
+    left: 50%;
     transform: translateX(-50%);
-    width: min(90vw, 760px);
+    width: min(90vw, 780px);
     text-align: center;
-    color: rgba(255,255,255,0.48);
-    font-size: 0.9rem;
-    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.38);
+    font-size: 0.88rem;
+    letter-spacing: 0.05em;
   }
 </style>
 </head>
 
 <body>
-  <main class="space" id="space" aria-label="Silent visual space metronome">
-    <section class="metronome">
-      <div class="second-marks" id="secondMarks"></div>
-
-      <div class="outer-ring"></div>
-      <div class="middle-ring"></div>
+  <main class="app">
+    <section class="metronome" aria-label="Silent visual metronome">
+      <div class="ring"></div>
       <div class="inner-ring"></div>
+      <div class="marks" id="marks"></div>
 
-      <div class="core" id="core">
+      <div class="centre">
         <div class="cycle" id="cycleText">Cycle 1</div>
         <div class="countdown" id="countdown">01:00</div>
         <div class="label">Silent · Visual · 60 BPM</div>
-
-        <div class="beat-indicator">
-          <div class="beat-dot" id="beatDot"></div>
-        </div>
       </div>
     </section>
 
     <div class="caption">
-      One visual beat per second. The countdown resets every minute and continues indefinitely.
+      Pure black visual metronome. One marker step per second. Endless one-minute cycles.
     </div>
   </main>
 
 <script>
-  const space = document.getElementById("space");
-  const secondMarks = document.getElementById("secondMarks");
+  const marksContainer = document.getElementById("marks");
   const countdown = document.getElementById("countdown");
   const cycleText = document.getElementById("cycleText");
-  const core = document.getElementById("core");
-  const beatDot = document.getElementById("beatDot");
 
   let remaining = 60;
   let cycle = 1;
+  let activeMark = 0;
+  const marks = [];
 
   function formatTime(seconds) {
     const mins = Math.floor(seconds / 60);
@@ -226,60 +178,39 @@
     return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   }
 
-  function createStaticStars() {
-    for (let i = 0; i < 150; i++) {
-      const star = document.createElement("div");
-      star.className = "star";
-
-      star.style.left = `${Math.random() * 100}%`;
-      star.style.top = `${Math.random() * 100}%`;
-      star.style.setProperty("--size", `${Math.random() < 0.85 ? 1.5 : 2.6}px`);
-      star.style.setProperty("--opacity", `${0.28 + Math.random() * 0.58}`);
-
-      space.appendChild(star);
-    }
-  }
-
-  function createSecondMarks() {
+  function createMarks() {
     for (let i = 0; i < 60; i++) {
       const mark = document.createElement("div");
       mark.className = i % 5 === 0 ? "mark major" : "mark";
       mark.style.transform = `rotate(${i * 6}deg) translateY(35vmin)`;
-      secondMarks.appendChild(mark);
+      marksContainer.appendChild(mark);
+      marks.push(mark);
     }
   }
 
   function render() {
     countdown.textContent = formatTime(remaining);
     cycleText.textContent = `Cycle ${cycle}`;
-  }
 
-  function beat() {
-    core.classList.add("beat");
-    beatDot.classList.add("active");
-
-    setTimeout(() => {
-      core.classList.remove("beat");
-      beatDot.classList.remove("active");
-    }, 170);
+    marks.forEach(mark => mark.classList.remove("active"));
+    marks[activeMark].classList.add("active");
   }
 
   function tick() {
+    activeMark = (activeMark + 1) % 60;
+
     remaining--;
 
-    if (remaining < 1) {
-      remaining = 60;
+    if (remaining < 0) {
+      remaining = 59;
       cycle++;
     }
 
     render();
-    beat();
   }
 
-  createStaticStars();
-  createSecondMarks();
+  createMarks();
   render();
-  beat();
 
   setInterval(tick, 1000);
 </script>
