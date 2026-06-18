@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Outer-Space Visual Metronome</title>
+
+<style>
+  :root {
+    --beat: 1s;
+    --glow: rgba(147, 220, 255, 0.95);
+    --deep: #03030f;
+    --violet: #6c4dff;
+    --cyan: #7df9ff;
+    --pink: #ff61d8;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    overflow: hidden;
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(111, 65, 255, 0.28), transparent 28%),
+      radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.18), transparent 25%),
+      radial-gradient(circle at 50% 80%, rgba(255, 0, 180, 0.16), transparent 32%),
+      linear-gradient(160deg, #02020a, #060017 45%, #000 100%);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: white;
+  }
+
+  .space {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    isolation: isolate;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0.8;
+    animation: twinkle var(--speed) infinite ease-in-out alternate;
+  }
+
+  @keyframes twinkle {
+    from {
+      transform: scale(0.35);
+      opacity: 0.25;
+    }
+    to {
+      transform: scale(1.6);
+      opacity: 1;
+      box-shadow: 0 0 14px white;
+    }
+  }
+
+  .nebula {
+    position: absolute;
+    inset: -20%;
+    background:
+      conic-gradient(
+        from 140deg,
+        transparent,
+        rgba(126, 58, 255, 0.18),
+        transparent,
+        rgba(0, 255, 255, 0.12),
+        transparent,
+        rgba(255, 97, 216, 0.14),
+        transparent
+      );
+    filter: blur(40px);
+    animation: nebulaDrift 36s linear infinite;
+    z-index: -2;
+  }
+
+  @keyframes nebulaDrift {
+    to {
+      transform: rotate(360deg) scale(1.08);
+    }
+  }
+
+  .metronome-stage {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  .cosmic-clock {
+    position: relative;
+    width: min(82vmin, 760px);
+    height: min(82vmin, 760px);
+    display: grid;
+    place-items: center;
+  }
+
+  .orbit {
+    position: absolute;
+    border: 1px solid rgba(125, 249, 255, 0.16);
+    border-radius: 50%;
+    animation: orbitSpin linear infinite;
+  }
+
+  .orbit.one {
+    width: 92%;
+    height: 92%;
+    animation-duration: 18s;
+  }
+
+  .orbit.two {
+    width: 72%;
+    height: 72%;
+    animation-duration: 11s;
+    border-color: rgba(255, 97, 216, 0.18);
+  }
+
+  .orbit.three {
+    width: 52%;
+    height: 52%;
+    animation-duration: 7s;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  @keyframes orbitSpin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .planet {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, white, var(--cyan), #1e4cff);
+    box-shadow: 0 0 28px var(--cyan);
+  }
+
+  .orbit.one .planet {
+    top: 8%;
+    left: 50%;
+  }
+
+  .orbit.two .planet {
+    bottom: 10%;
+    right: 18%;
+    background: radial-gradient(circle at 30% 30%, white, var(--pink), #5c003c);
+    box-shadow: 0 0 28px var(--pink);
+  }
+
+  .orbit.three .planet {
+    top: 50%;
+    left: 0%;
+    background: radial-gradient(circle at 30% 30%, white, #fff493, #ff9f1c);
+    box-shadow: 0 0 28px #fff493;
+  }
+
+  .dial {
+    position: relative;
+    width: 44%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle, rgba(255,255,255,0.18), rgba(125,249,255,0.08) 35%, rgba(10,10,40,0.65) 72%),
+      linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.22);
+    box-shadow:
+      0 0 40px rgba(125, 249, 255, 0.28),
+      inset 0 0 60px rgba(125, 249, 255, 0.14);
+  }
+
+  .countdown {
+    font-size: clamp(3.6rem, 9vmin, 7.4rem);
+    font-weight: 800;
+    letter-spacing: -0.08em;
+    text-shadow:
+      0 0 12px rgba(255,255,255,0.9),
+      0 0 34px rgba(125,249,255,0.95),
+      0 0 70px rgba(255,97,216,0.55);
+  }
+
+  .label {
+    position: absolute;
+    bottom: 17%;
+    font-size: clamp(0.72rem, 1.7vmin, 1rem);
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.72);
+  }
+
+  .cycle {
+    position: absolute;
+    top: 16%;
+    font-size: clamp(0.8rem, 1.8vmin, 1.1rem);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(125,249,255,0.86);
+  }
+
+  .pendulum-wrap {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
+  .pendulum {
+    position: absolute;
+    width: 6px;
+    height: 38%;
+    top: 8%;
+    left: calc(50% - 3px);
+    transform-origin: 50% 100%;
+    border-radius: 999px;
+    background: linear-gradient(to bottom, transparent, white 20%, var(--cyan), transparent);
+    filter: drop-shadow(0 0 18px var(--cyan));
+    animation: swing var(--beat) cubic-bezier(.45,0,.55,1) infinite alternate;
+  }
+
+  @keyframes swing {
+    from {
+      transform: rotate(-34deg);
+    }
+    to {
+      transform: rotate(34deg);
+    }
+  }
+
+  .comet {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    width: 42px;
+    height: 42px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 32% 32%, white, var(--cyan) 38%, rgba(0, 0, 80, 0.6) 70%);
+    box-shadow:
+      0 0 24px white,
+      0 0 54px var(--cyan),
+      0 0 100px var(--violet);
+  }
+
+  .comet::after {
+    content: "";
+    position: absolute;
+    width: 88px;
+    height: 16px;
+    right: 28px;
+    top: 13px;
+    border-radius: 999px;
+    background: linear-gradient(to left, rgba(125,249,255,0.9), transparent);
+    filter: blur(4px);
+  }
+
+  .pulse-ring {
+    position: absolute;
+    width: 44%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid rgba(125,249,255,0.82);
+    opacity: 0;
+    transform: scale(0.82);
+    pointer-events: none;
+  }
+
+  .pulse-ring.active {
+    animation: cosmicPulse 1s ease-out;
+  }
+
+  @keyframes cosmicPulse {
+    0% {
+      opacity: 0.95;
+      transform: scale(0.78);
+      box-shadow: 0 0 24px rgba(125,249,255,0.8);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.9);
+      box-shadow: 0 0 110px rgba(255,97,216,0.4);
+    }
+  }
+
+  .beat-flash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.22), transparent 38%);
+    opacity: 0;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+
+  .beat-flash.active {
+    animation: flash 0.28s ease-out;
+  }
+
+  @keyframes flash {
+    0% { opacity: 0.55; }
+    100% { opacity: 0; }
+  }
+
+  .second-marks {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+
+  .mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 16px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.38);
+    transform-origin: 50% calc(min(41vmin, 380px) * -1);
+  }
+
+  .mark.major {
+    height: 27px;
+    background: rgba(125,249,255,0.75);
+    box-shadow: 0 0 12px rgba(125,249,255,0.9);
+  }
+
+  .meteor {
+    position: absolute;
+    width: 140px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, white);
+    opacity: 0.8;
+    transform: rotate(-25deg);
+    animation: meteor 4.8s linear infinite;
+  }
+
+  @keyframes meteor {
+    0% {
+      transform: translate(-20vw, -10vh) rotate(-25deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate(130vw, 88vh) rotate(-25deg);
+      opacity: 0;
+    }
+  }
+
+  .event-horizon {
+    position: absolute;
+    width: 23vmin;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    right: 7vw;
+    bottom: 8vh;
+    background:
+      radial-gradient(circle, black 36%, transparent 37%),
+      conic-gradient(from 0deg, #ff61d8, #7df9ff, #6c4dff, #ffef7d, #ff61d8);
+    filter: blur(0.3px);
+    box-shadow: 0 0 55px rgba(255,97,216,0.36);
+    animation: blackHole 8s linear infinite;
+    opacity: 0.75;
+  }
+
+  @keyframes blackHole {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .instructions {
+    position: absolute;
+    left: 50%;
+    bottom: 4vh;
+    transform: translateX(-50%);
+    width: min(92vw, 780px);
+    text-align: center;
+    color: rgba(255,255,255,0.58);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 700px) {
+    .dial {
+      width: 56%;
+    }
+
+    .pulse-ring {
+      width: 56%;
+    }
+
+    .event-horizon {
+      opacity: 0.38;
+    }
+  }
+</style>
+</head>
+
+<body>
+  <main class="space" aria-label="Silent outer-space visual metronome">
+    <div class="nebula"></div>
+    <div class="meteor" style="top: 2vh; left: 0; animation-delay: 0s;"></div>
+    <div class="meteor" style="top: 18vh; left: 0; animation-delay: 2.2s;"></div>
+    <div class="meteor" style="top: 34vh; left: 0; animation-delay: 5.4s;"></div>
+    <div class="event-horizon"></div>
+
+    <section class="metronome-stage">
+      <div class="cosmic-clock">
+        <div class="second-marks" id="secondMarks"></div>
+
+        <div class="orbit one"><div class="planet"></div></div>
+        <div class="orbit two"><div class="planet"></div></div>
+        <div class="orbit three"><div class="planet"></div></div>
+
+        <div class="pendulum-wrap">
+          <div class="pendulum">
+            <div class="comet"></div>
+          </div>
+        </div>
+
+        <div class="pulse-ring" id="pulseRing"></div>
+        <div class="beat-flash" id="beatFlash"></div>
+
+        <div class="dial">
+          <div class="cycle" id="cycleText">Cycle 1</div>
+          <div class="countdown" id="countdown">01:00</div>
+          <div class="label">Silent Cosmic Metronome · 60 BPM</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="instructions">
+      A purely visual one-second metronome. Each orbit counts down from one minute, then resets forever.
+    </div>
+  </main>
+
+<script>
+  const countdownEl = document.getElementById("countdown");
+  const cycleText = document.getElementById("cycleText");
+  const pulseRing = document.getElementById("pulseRing");
+  const beatFlash = document.getElementById("beatFlash");
+  const secondMarks = document.getElementById("secondMarks");
+  const space = document.querySelector(".space");
+
+  let remaining = 60;
+  let cycle = 1;
+
+  function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+
+  function visualBeat() {
+    pulseRing.classList.remove("active");
+    beatFlash.classList.remove("active");
+
+    void pulseRing.offsetWidth;
+    void beatFlash.offsetWidth;
+
+    pulseRing.classList.add("active");
+    beatFlash.classList.add("active");
+
+    countdownEl.style.transform = "scale(1.06)";
+    setTimeout(() => {
+      countdownEl.style.transform = "scale(1)";
+    }, 120);
+  }
+
+  function tick() {
+    countdownEl.textContent = formatTime(remaining);
+    cycleText.textContent = `Cycle ${cycle}`;
+    visualBeat();
+
+    if (remaining === 0) {
+      remaining = 60;
+      cycle++;
+    } else {
+      remaining--;
+    }
+  }
+
+  function createStars() {
+    for (let i = 0; i < 180; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.setProperty("--speed", `${1.5 + Math.random() * 4}s`);
+      star.style.animationDelay = `${Math.random() * 5}s`;
+
+      const size = Math.random() < 0.85 ? 2 : 3 + Math.random() * 2;
+      star.style.width = `${size}px`;
+      star.style.height = `${size}px`;
+
+      space.appendChild(star);
+    }
+  }
+
+  function createSecondMarks() {
+    for (let i = 0; i < 60; i++) {
+      const mark = document.createElement("div");
+      mark.className = i % 5 === 0 ? "mark major" : "mark";
+      mark.style.transform = `rotate(${i * 6}deg) translateY(-38vmin)`;
+      secondMarks.appendChild(mark);
+    }
+  }
+
+  createStars();
+  createSecondMarks();
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
