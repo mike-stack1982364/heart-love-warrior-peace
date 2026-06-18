@@ -22,8 +22,7 @@
   }
 
   body {
-    display: grid;
-    place-items: center;
+    background: #000;
   }
 
   .app {
@@ -31,14 +30,44 @@
     height: 100vh;
     background: #000;
     display: grid;
-    place-items: center;
+    grid-template-columns: minmax(260px, 1fr) minmax(360px, 560px) minmax(260px, 1fr);
+    align-items: center;
+    gap: 32px;
+    padding: 36px 48px;
+  }
+
+  .names {
+    font-size: 18px;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.92);
+    letter-spacing: 0.01em;
+  }
+
+  .names.left {
+    justify-self: end;
+    text-align: left;
+  }
+
+  .names.right {
+    justify-self: start;
+    text-align: left;
+  }
+
+  .name {
+    margin: 10px 0;
+    white-space: normal;
+  }
+
+  .metronome-area {
     position: relative;
+    display: grid;
+    place-items: center;
   }
 
   .metronome {
     position: relative;
-    width: min(78vmin, 740px);
-    height: min(78vmin, 740px);
+    width: min(54vmin, 520px);
+    height: min(54vmin, 520px);
     display: grid;
     place-items: center;
   }
@@ -72,7 +101,7 @@
     height: 12px;
     border-radius: 20px;
     background: rgba(255,255,255,0.22);
-    transform-origin: 50% -35vmin;
+    transform-origin: 50% 50%;
   }
 
   .mark.major {
@@ -90,7 +119,7 @@
 
   .centre {
     position: relative;
-    width: min(36vmin, 340px);
+    width: min(27vmin, 260px);
     aspect-ratio: 1;
     border-radius: 50%;
     display: grid;
@@ -103,7 +132,7 @@
   }
 
   .countdown {
-    font-size: clamp(4rem, 10vmin, 8rem);
+    font-size: clamp(3.4rem, 7.8vmin, 6.2rem);
     font-weight: 850;
     letter-spacing: -0.08em;
     line-height: 1;
@@ -113,8 +142,8 @@
 
   .cycle {
     position: absolute;
-    top: 18%;
-    font-size: clamp(0.72rem, 1.5vmin, 1rem);
+    top: 17%;
+    font-size: clamp(0.7rem, 1.25vmin, 0.9rem);
     letter-spacing: 0.28em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.62);
@@ -122,44 +151,107 @@
 
   .label {
     position: absolute;
-    bottom: 18%;
-    font-size: clamp(0.68rem, 1.4vmin, 0.95rem);
-    letter-spacing: 0.25em;
+    bottom: 17%;
+    font-size: clamp(0.64rem, 1.15vmin, 0.82rem);
+    letter-spacing: 0.24em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.42);
   }
 
   .caption {
     position: absolute;
-    bottom: 4vh;
+    bottom: -54px;
     left: 50%;
     transform: translateX(-50%);
-    width: min(90vw, 780px);
+    width: max-content;
+    max-width: 90vw;
     text-align: center;
     color: rgba(255,255,255,0.38);
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 980px) {
+    html,
+    body {
+      overflow: auto;
+    }
+
+    .app {
+      min-height: 100vh;
+      height: auto;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 24px;
+      padding: 28px 22px 42px;
+    }
+
+    .names.left,
+    .names.right {
+      justify-self: center;
+      width: min(92vw, 620px);
+      text-align: center;
+    }
+
+    .metronome {
+      width: min(74vmin, 460px);
+      height: min(74vmin, 460px);
+    }
+
+    .centre {
+      width: min(36vmin, 230px);
+    }
+
+    .caption {
+      position: static;
+      transform: none;
+      margin-top: 18px;
+      width: auto;
+    }
   }
 </style>
 </head>
 
 <body>
   <main class="app">
-    <section class="metronome" aria-label="Silent visual metronome">
-      <div class="ring"></div>
-      <div class="inner-ring"></div>
-      <div class="marks" id="marks"></div>
 
-      <div class="centre">
-        <div class="cycle" id="cycleText">Cycle 1</div>
-        <div class="countdown" id="countdown">01:00</div>
-        <div class="label">Silent · Visual · 60 BPM</div>
+    <section class="names left" aria-label="Family names left column">
+      <div class="name">Grandad (Michael Letho) and Grandma (Patricia Letho)</div>
+      <div class="name">Dad and Ahzhu</div>
+      <div class="name">Paul and Elaine</div>
+      <div class="name">Marea Letho</div>
+      <div class="name">Mick Letho</div>
+      <div class="name">Sharon Letho</div>
+      <div class="name">Andy Letho</div>
+      <div class="name">Kate Letho</div>
+    </section>
+
+    <section class="metronome-area" aria-label="Silent visual metronome">
+      <div class="metronome">
+        <div class="ring"></div>
+        <div class="inner-ring"></div>
+        <div class="marks" id="marks"></div>
+
+        <div class="centre">
+          <div class="cycle" id="cycleText">Cycle 1</div>
+          <div class="countdown" id="countdown">01:00</div>
+          <div class="label">Silent · Visual · 60 BPM</div>
+        </div>
+      </div>
+
+      <div class="caption">
+        Pure black visual metronome. One marker step per second. Endless one-minute cycles.
       </div>
     </section>
 
-    <div class="caption">
-      Pure black visual metronome. One marker step per second. Endless one-minute cycles.
-    </div>
+    <section class="names right" aria-label="Family names right column">
+      <div class="name">Harry and Rita Perelberg</div>
+      <div class="name">Ben Perelberg</div>
+      <div class="name">Martin Zanin</div>
+      <div class="name">John Wyatt</div>
+      <div class="name">Peter Citrine (Lachlan and Caleb Citrine)</div>
+    </section>
+
   </main>
 
 <script>
@@ -182,7 +274,7 @@
     for (let i = 0; i < 60; i++) {
       const mark = document.createElement("div");
       mark.className = i % 5 === 0 ? "mark major" : "mark";
-      mark.style.transform = `rotate(${i * 6}deg) translateY(35vmin)`;
+      mark.style.transform = `translate(-50%, -50%) rotate(${i * 6}deg) translateY(-25vmin)`;
       marksContainer.appendChild(mark);
       marks.push(mark);
     }
@@ -198,7 +290,6 @@
 
   function tick() {
     activeMark = (activeMark + 1) % 60;
-
     remaining--;
 
     if (remaining < 0) {
